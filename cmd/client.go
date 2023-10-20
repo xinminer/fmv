@@ -40,6 +40,7 @@ var clientCmd = &cli.Command{
 		&cli.IntFlag{
 			Name:  "parallel",
 			Usage: "parallel transmission",
+			Value: 5,
 		},
 	},
 	Action: func(ctx *cli.Context) error {
