@@ -39,10 +39,12 @@ func StartServer(addr string, chunkSize int, destinations []string, consulAddr s
 		conn, err := l.Accept()
 		log.Println("Connection established...")
 		if err != nil {
+			log.Printf("accept error: %s", err.Error())
 			continue
 		}
 		dest, err := GetMaxCapPath(destinations)
 		if err != nil {
+			log.Printf("get max cap path: %s", err.Error())
 			break
 		}
 		fs := NewFileServer(conn, dest, chunkSize)
