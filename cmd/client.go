@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"fmt"
-	"fmv/pkg/file"
-	"fmv/pkg/server"
-	"net"
-
+	"fmv/pkg/client"
 	"github.com/urfave/cli/v2"
 )
+
+func init() {
+	registerCommand(clientCmd)
+}
 
 var clientCmd = &cli.Command{
 	Name:    "client",
@@ -15,60 +15,23 @@ var clientCmd = &cli.Command{
 	Usage:   "start an upload client.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
-			Name:    "network",
-			Aliases: []string{"nw"},
-			Usage:   "choose a network protocol(tcp|udp)",
-			Value:   "tcp",
-		},
-		&cli.StringFlag{
 			Name:  "addr",
 			Usage: "specify a server address",
 			Value: "127.0.0.1:9988",
 		},
-		&cli.StringFlag{
-			Name:    "dir",
-			Value:   "./",
-			Aliases: []string{"d"},
-			Usage:   "upload dir or save dir",
+		&cli.IntFlag{
+			Name:  "chunk",
+			Usage: "Size in MB of chunks size to be used as the streaming buffer (bigger might improve performance)",
+			Value: 100,
 		},
 	},
 	Action: func(ctx *cli.Context) error {
-		network := ctx.String("network")
 		addr := ctx.String("addr")
-		dir := ctx.String("dir")
+		chunk := ctx.Int("chunk")
 
-		if !file.PathExists(dir) {
-			return fmt.Errorf("folder does not exist")
-		}
+		files := ctx.Args().Slice()
 
-		fileNames := ctx.Args().Slice()
-		if len(fileNames) == 0 {
-			return fmt.Errorf("no transfer files available")
-		}
-
-		switch network {
-		case "tcp":
-			tcpAddr, err := net.ResolveTCPAddr(network, addr)
-			if err != nil {
-				return err
-			}
-
-			conTcp, err := net.DialTCP(network, nil, tcpAddr)
-			if err != nil {
-				return err
-			}
-
-			tcpCon := server.NewTcp(conTcp)
-			srv := file.NewClient(tcpCon, dir, fileNames)
-			_ = srv.SendFile()
-		case "udp":
-		default:
-			return fmt.Errorf("network param err: select tcp | udp")
-		}
+		client.StartClient(files, addr, chunk)
 		return nil
 	},
-}
-
-func init() {
-	registerCommand(clientCmd)
 }
