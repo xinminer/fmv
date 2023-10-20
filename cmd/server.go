@@ -37,10 +37,10 @@ var serverCmd = &cli.Command{
 		addr := ctx.String("addr")
 		chunk := ctx.Int("chunk")
 		consulAddr := ctx.String("consul")
-		route := ctx.String("route")
+		tag := ctx.String("tag")
 
 		dests := ctx.Args().Slice()
 
-		return server.StartServer(addr, chunk, dests, consulAddr, []string{route})
+		return server.StartServer(addr, chunk, dests, consulAddr, []string{tag})
 	},
 }
