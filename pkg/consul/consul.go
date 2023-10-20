@@ -1,7 +1,9 @@
 package consul
 
 import (
+	"errors"
 	"fmt"
+	"github.com/gogf/gf/v2/util/grand"
 	consulapi "github.com/hashicorp/consul/api"
 )
 
@@ -41,4 +43,27 @@ func RegisterService(addr string, dis DiscoveryConfig) error {
 	}
 
 	return nil
+}
+
+func Discovery(serviceName string, address string, tag string) (string, error) {
+	config := consulapi.DefaultConfig()
+	config.Address = address
+	client, err := consulapi.NewClient(config)
+	if err != nil {
+		return "", err
+	}
+	services, _, err := client.Health().Service(serviceName, tag, false, nil)
+	if err != nil {
+		return "", err
+	}
+	ses := len(services)
+	if ses == 0 {
+		return "", errors.New("not found service")
+	}
+	rand := grand.N(0, ses-1)
+	se := services[rand]
+
+	result := fmt.Sprintf("%s:%d", se.Service.Address, se.Service.Port)
+
+	return result, nil
 }

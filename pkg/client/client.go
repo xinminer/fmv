@@ -2,10 +2,11 @@ package client
 
 import (
 	"fmt"
+	"fmv/pkg/consul"
 	"os"
 )
 
-func StartClient(files []string, addr string, chunkSize int) {
+func StartClient(files []string, chunkSize int, consulAddr string, tag string) {
 
 	if len(files) == 0 {
 		fmt.Println("Error: At least one filename must be provided")
@@ -15,7 +16,11 @@ func StartClient(files []string, addr string, chunkSize int) {
 	done := make(chan bool)
 	for _, file := range files {
 		go func(file string) {
-			fc := NewFileClient(file, addr, chunkSize)
+			se, err := consul.Discovery("fmv-server", consulAddr, tag)
+			if err != nil {
+				return
+			}
+			fc := NewFileClient(file, se, chunkSize)
 			fc.SendFile()
 			done <- true
 		}(file)

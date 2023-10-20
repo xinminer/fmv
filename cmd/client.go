@@ -20,9 +20,13 @@ var clientCmd = &cli.Command{
 	Usage:   "start an upload client.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
-			Name:  "addr",
+			Name:  "consul",
 			Usage: "specify a server address",
 			Value: "127.0.0.1:9988",
+		},
+		&cli.StringFlag{
+			Name:  "tag",
+			Usage: "specify a server address",
 		},
 		&cli.IntFlag{
 			Name:  "chunk",
@@ -44,7 +48,8 @@ var clientCmd = &cli.Command{
 		},
 	},
 	Action: func(ctx *cli.Context) error {
-		addr := ctx.String("addr")
+		consul := ctx.String("consul")
+		tag := ctx.String("tag")
 		chunk := ctx.Int("chunk")
 		path := ctx.String("path")
 		suffix := ctx.String("suffix")
@@ -65,7 +70,7 @@ var clientCmd = &cli.Command{
 			if len(list) > parallel {
 				list = list[:parallel-1]
 			}
-			client.StartClient(list, addr, chunk)
+			client.StartClient(list, chunk, consul, tag)
 		})
 
 		select {}
