@@ -37,7 +37,9 @@ func (fc *FileClient) SendFile() {
 func (fc *FileClient) Close() {
 	_ = fc.conn.Close()
 	_ = fc.file.Close()
-	_ = gfile.Remove(fc.fileName)
+	if err := gfile.Remove(fc.fileName); err != nil {
+		fmt.Printf("rmove file err: %s", err.Error())
+	}
 }
 
 func (fc *FileClient) initialize(filePath, addr string, chunkSize int) {
