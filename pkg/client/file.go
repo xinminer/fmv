@@ -37,9 +37,6 @@ func (fc *FileClient) SendFile() {
 func (fc *FileClient) Close() {
 	_ = fc.conn.Close()
 	_ = fc.file.Close()
-	if err := gfile.Remove(fc.fileName); err != nil {
-		fmt.Printf("rmove file err: %s", err.Error())
-	}
 }
 
 func (fc *FileClient) initialize(filePath, addr string, chunkSize int) {
@@ -115,4 +112,7 @@ func (fc *FileClient) waitForAck() {
 		log.Panicln("Server did not ack")
 	}
 	log.Printf("File [%s] DONE\n", fc.info.Name())
+	if err := gfile.Remove(fc.fileName); err != nil {
+		log.Printf("Rremove file [%s] err: %s", fc.fileName, err.Error())
+	}
 }
