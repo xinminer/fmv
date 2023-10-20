@@ -25,16 +25,22 @@ var serverCmd = &cli.Command{
 			Value: 100,
 		},
 		&cli.StringFlag{
-			Name:  "dest",
-			Usage: "upload dir or save path",
-			Value: "/mnt/data1",
+			Name:  "consul",
+			Usage: "consul address",
+		},
+		&cli.StringFlag{
+			Name:  "route",
+			Usage: "route",
 		},
 	},
 	Action: func(ctx *cli.Context) error {
 		addr := ctx.String("addr")
 		chunk := ctx.Int("chunk")
-		dest := ctx.String("dest")
-		server.StartServer(addr, chunk, dest)
-		return nil
+		consulAddr := ctx.String("consul")
+		route := ctx.String("route")
+
+		dests := ctx.Args().Slice()
+
+		return server.StartServer(addr, chunk, dests, consulAddr, []string{route})
 	},
 }
