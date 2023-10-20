@@ -61,6 +61,7 @@ var clientCmd = &cli.Command{
 
 			if len(list) == 0 {
 				time.Sleep(5 * time.Second)
+				return
 			}
 
 			if len(list) > parallel {

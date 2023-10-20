@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/binary"
 	"fmt"
+	"github.com/gogf/gf/v2/os/gfile"
 	"log"
 	"net"
 	"os"
@@ -36,6 +37,7 @@ func (fc *FileClient) SendFile() {
 func (fc *FileClient) Close() {
 	_ = fc.conn.Close()
 	_ = fc.file.Close()
+	_ = gfile.Remove(fc.fileName)
 }
 
 func (fc *FileClient) initialize(filePath, addr string, chunkSize int) {
