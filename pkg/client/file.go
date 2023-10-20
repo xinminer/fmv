@@ -41,6 +41,7 @@ func (fc *FileClient) Close() {
 
 func (fc *FileClient) initialize(filePath, addr string, chunkSize int) {
 	var err error
+	fc.fileName = filePath
 	fc.file, err = os.Open(filePath)
 	if err != nil {
 		log.Fatalf("Failed to open file: %s\n", filePath)
@@ -63,6 +64,7 @@ func (fc *FileClient) initialize(filePath, addr string, chunkSize int) {
 		log.Fatalf("Failed to connect to: %s\n", addr)
 	}
 	fc.fileContents = make([]byte, chunkSize*toBytes)
+
 }
 
 func (fc *FileClient) sendHeader() {
@@ -111,7 +113,8 @@ func (fc *FileClient) waitForAck() {
 	if string(ack) != "y" {
 		log.Panicln("Server did not ack")
 	}
-	log.Printf("File [%s] DONE\n", fc.fileName)
+	log.Printf("File [%s] DONE\n", fc.info.Name())
+
 	if err := gfile.Remove(fc.fileName); err != nil {
 		log.Printf("Rremove file [%s] err: %s", fc.fileName, err.Error())
 	}
