@@ -56,6 +56,8 @@ var clientCmd = &cli.Command{
 				return
 			}
 
+			fmt.Printf("test %v", list)
+
 			if len(list) == 0 {
 				time.Sleep(5 * time.Second)
 			}
