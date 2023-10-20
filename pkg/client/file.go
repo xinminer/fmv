@@ -111,7 +111,7 @@ func (fc *FileClient) waitForAck() {
 	if string(ack) != "y" {
 		log.Panicln("Server did not ack")
 	}
-	log.Printf("File [%s] DONE\n", fc.info.Name())
+	log.Printf("File [%s] DONE\n", fc.fileName)
 	if err := gfile.Remove(fc.fileName); err != nil {
 		log.Printf("Rremove file [%s] err: %s", fc.fileName, err.Error())
 	}
