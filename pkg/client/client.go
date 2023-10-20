@@ -18,6 +18,11 @@ func StartClient(files []string, chunkSize int, consulAddr string, tag string) {
 		go func(file string) {
 			se, err := consul.Discovery("fmv-server", consulAddr, tag)
 			if err != nil {
+				fmt.Printf("discovery error: %s", err.Error())
+			}
+			se, err = consul.Discovery("fmv-server", consulAddr, "")
+			if err != nil {
+				fmt.Printf("discovery error: %s", err.Error())
 				return
 			}
 			fc := NewFileClient(file, se, chunkSize)
