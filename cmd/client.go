@@ -58,7 +58,9 @@ var clientCmd = &cli.Command{
 
 		for {
 			ch <- struct{}{}
-			list, err := gfile.ScanDirFile(path, suffix, true)
+			fmt.Println(path)
+			fmt.Println(suffix)
+			list, err := gfile.ScanDirFile(path, suffix, false)
 			if err != nil {
 				fmt.Printf("error (%s) in obtaining file list", err.Error())
 				continue
