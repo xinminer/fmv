@@ -5,7 +5,9 @@ import (
 	"fmv/pkg/client"
 	"fmv/pkg/consul"
 	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/urfave/cli/v2"
+	"os"
 	"time"
 )
 
@@ -58,22 +60,25 @@ var clientCmd = &cli.Command{
 
 		for {
 			ch <- struct{}{}
-			fmt.Println(path)
-			fmt.Println(suffix)
-			list, err := gfile.ScanDirFile(path, suffix, false)
-			if err != nil {
-				fmt.Printf("error (%s) in obtaining file list", err.Error())
-				continue
+
+			var fileName string
+			entries, _ := os.ReadDir(path)
+			for _, entry := range entries {
+				name := entry.Name()
+				if gstr.HasSuffix(name, suffix) {
+					fileName = name
+				}
 			}
 
-			if len(list) == 0 {
+			if fileName == "" {
 				fmt.Println("not found file")
 				time.Sleep(5 * time.Second)
 				continue
 			}
 
-			fileName := list[0]
-			if err := gfile.Move(fileName, fmt.Sprintf("%s.%s", fileName, ".fmv")); err != nil {
+			fileName = fmt.Sprintf("%s/%s", path, fileName)
+
+			if err := gfile.Move(fileName, fmt.Sprintf("%s.%s", fileName, "fmv")); err != nil {
 				continue
 			}
 			fileName = fmt.Sprintf("%s.%s", fileName, "fmv")
