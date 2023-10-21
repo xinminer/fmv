@@ -68,6 +68,7 @@ var clientCmd = &cli.Command{
 			fmt.Println("=============")
 
 			if len(list) == 0 {
+				fmt.Println("------")
 				time.Sleep(5 * time.Second)
 				continue
 			}
