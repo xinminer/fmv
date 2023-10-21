@@ -58,7 +58,15 @@ func Discovery(serviceName string, address string, tag string) (string, error) {
 	}
 	ses := len(services)
 	if ses == 0 {
-		return "", errors.New("not found service")
+		services, _, err := client.Health().Service(serviceName, "", false, nil)
+		if err != nil {
+			return "", err
+		}
+		ses := len(services)
+		ses = len(services)
+		if ses == 0 {
+			return "", errors.New("not found service")
+		}
 	}
 	rand := grand.N(0, ses-1)
 	se := services[rand]

@@ -29,8 +29,8 @@ var serverCmd = &cli.Command{
 			Usage: "consul address",
 		},
 		&cli.StringFlag{
-			Name:  "route",
-			Usage: "route",
+			Name:  "tag",
+			Usage: "tag",
 		},
 	},
 	Action: func(ctx *cli.Context) error {
