@@ -58,7 +58,7 @@ func Discovery(serviceName string, address string, tag string) (string, error) {
 	}
 	ses := len(services)
 	if ses == 0 {
-		services, _, err := client.Health().Service(serviceName, "", false, nil)
+		services, _, err = client.Health().Service(serviceName, "", false, nil)
 		if err != nil {
 			return "", err
 		}
