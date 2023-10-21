@@ -1,12 +1,10 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"fmv/pkg/client"
 	"fmv/pkg/consul"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/os/gtimer"
 	"github.com/urfave/cli/v2"
 	"time"
 )
@@ -58,24 +56,24 @@ var clientCmd = &cli.Command{
 
 		ch := make(chan struct{}, parallel)
 
-		gtimer.AddSingleton(ctx.Context, time.Second, func(ctx context.Context) {
+		for {
 			ch <- struct{}{}
 			list, err := gfile.ScanDirFile(path, suffix, false)
 			if err != nil {
 				fmt.Printf("error (%s) in obtaining file list", err.Error())
-				return
+				continue
 			}
 
 			if len(list) == 0 {
 				time.Sleep(5 * time.Second)
-				return
+				continue
 			}
 
 			fileName := list[0]
 			if err := gfile.Move(fileName, fmt.Sprintf("%s.%s", fileName, ".fmv")); err != nil {
-				return
+				continue
 			}
-			fileName = fmt.Sprintf("%s.%s", fileName, ".fmv")
+			fileName = fmt.Sprintf("%s.%s", fileName, "fmv")
 
 			go func(file string) {
 				se, err := consul.Discovery("fmv-server", consulAddr, tag)
@@ -91,8 +89,6 @@ var clientCmd = &cli.Command{
 				fc.SendFile()
 				<-ch
 			}(fileName)
-		})
-
-		select {}
+		}
 	},
 }
