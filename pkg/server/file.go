@@ -44,34 +44,40 @@ func (fs *FileServer) Close() {
 	_ = fs.conn.Close()
 }
 
-func (fs *FileServer) fetchFileInfoSizes() {
+func (fs *FileServer) fetchFileInfoSizes() error {
 	err := binary.Read(fs.conn, binary.LittleEndian, &fs.info.fileSize)
 	if err != nil {
-		log.Panicln("Could not read file size from incoming connection")
+		return err
 	}
 	err = binary.Read(fs.conn, binary.LittleEndian, &fs.info.nameSize)
 	if err != nil {
-		log.Panicln("Could not read fileName size from incoming connection")
+		return err
 	}
+	return nil
 }
 
-func (fs *FileServer) fetchFileInfoName() {
+func (fs *FileServer) fetchFileInfoName() error {
 	fileName := new(bytes.Buffer)
 	for {
 		n, err := io.CopyN(fileName, fs.conn, fs.info.nameSize)
 		if err != nil {
-			log.Panicln("Could not read fileName from incoming connection")
+			return err
 		}
 		if n == fs.info.nameSize {
 			break
 		}
 	}
 	fs.info.fileName = fileName.String()
+	return nil
 }
 
 func (fs *FileServer) initFileInfo() {
-	fs.fetchFileInfoSizes()
-	fs.fetchFileInfoName()
+	if err := fs.fetchFileInfoSizes(); err != nil {
+		return
+	}
+	if err := fs.fetchFileInfoName(); err != nil {
+
+	}
 }
 
 func (fs *FileServer) createNewFile() {
