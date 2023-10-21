@@ -71,11 +71,7 @@ func Discovery(serviceName string, address string, tag string) (string, error) {
 	if ses == 1 {
 		se = services[0]
 	} else {
-		fmt.Println("sss")
-		fmt.Println(ses)
-		rand := grand.N(0, ses)
-		fmt.Println("test===========")
-		fmt.Println(rand)
+		rand := grand.N(0, ses-1)
 		se = services[rand]
 	}
 
