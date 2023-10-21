@@ -71,6 +71,12 @@ var clientCmd = &cli.Command{
 				return
 			}
 
+			fileName := list[0]
+			if err := gfile.Move(fileName, fmt.Sprintf("%s.%s", fileName, ".fmv")); err != nil {
+				return
+			}
+			fileName = fmt.Sprintf("%s.%s", fileName, ".fmv")
+
 			go func(file string) {
 				se, err := consul.Discovery("fmv-server", consulAddr, tag)
 				if err != nil {
@@ -84,7 +90,7 @@ var clientCmd = &cli.Command{
 				fc := client.NewFileClient(file, se, chunk)
 				fc.SendFile()
 				<-ch
-			}(list[0])
+			}(fileName)
 		})
 
 		select {}

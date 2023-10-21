@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/text/gstr"
 	"io"
 	"log"
 	"net"
@@ -83,7 +84,7 @@ func (fs *FileServer) initFileInfo() {
 
 func (fs *FileServer) createNewFile() {
 	// Create destination file
-	fName := fs.dest + string(os.PathSeparator) + fs.info.fileName + ".tmp"
+	fName := fs.dest + string(os.PathSeparator) + fs.info.fileName
 
 	var err error
 	fs.file, err = os.Create(fName)
@@ -158,7 +159,7 @@ func (fs *FileServer) parseBody() {
 	}
 	fs.conn.Write([]byte("y"))
 	log.Printf("File [%s] DONE\n", fs.info.fileName)
-	tmpName := fs.dest + string(os.PathSeparator) + fs.info.fileName + ".tmp"
-	finName := fs.dest + string(os.PathSeparator) + fs.info.fileName
+	tmpName := fs.dest + string(os.PathSeparator) + fs.info.fileName
+	finName := fs.dest + string(os.PathSeparator) + gstr.Replace(fs.info.fileName, ".fmv", "")
 	_ = gfile.Move(tmpName, finName)
 }
