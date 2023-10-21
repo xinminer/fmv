@@ -57,6 +57,7 @@ var clientCmd = &cli.Command{
 		ch := make(chan struct{}, parallel)
 
 		for {
+			fmt.Println("=============1")
 			ch <- struct{}{}
 			list, err := gfile.ScanDirFile(path, suffix, false)
 			if err != nil {
