@@ -34,8 +34,10 @@ func StartServer(addr string, chunkSize int, destinations []string, consulAddr s
 		return err
 	}
 
+	ch := make(chan struct{}, 5)
 	// Accept concurrent connections
 	for {
+		ch <- struct{}{}
 		conn, err := l.Accept()
 		log.Println("Connection established...")
 		if err != nil {
@@ -48,7 +50,10 @@ func StartServer(addr string, chunkSize int, destinations []string, consulAddr s
 			break
 		}
 		fs := NewFileServer(conn, dest, chunkSize)
-		go fs.HandleFile()
+		go func() {
+			fs.HandleFile()
+			<-ch
+		}()
 	}
 
 	return nil
