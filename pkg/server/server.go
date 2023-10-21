@@ -5,6 +5,7 @@ import (
 	"fmv/pkg/consul"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 	"github.com/gogf/gf/v2/util/guid"
 	"github.com/shirou/gopsutil/disk"
 	"log"
@@ -60,26 +61,38 @@ func StartServer(addr string, chunkSize int, destinations []string, consulAddr s
 }
 
 func GetMaxCapPath(paths []string) (string, error) {
-	var maxCap uint64 = 0
-	var rsp string
+	//var maxCap uint64 = 0
+	//var rsp string
+	var list []string
 	for _, path := range paths {
 		usage, err := disk.Usage(path)
 		if err != nil {
 			fmt.Printf("disk usage error: %s", path)
 			continue
 		}
-		cap := usage.Free
-		if cap < 53687091200 {
+		//free := usage.Free
+		if usage.Free < 53687091200 {
 			continue
 		}
-		if cap > maxCap {
-			maxCap = cap
-			rsp = path
-		}
+		list = append(list, path)
+		//if free > maxCap {
+		//	maxCap = free
+		//	rsp = path
+		//}
 	}
 
-	if maxCap == 0 {
+	ps := len(list)
+
+	if ps == 0 {
 		return "", fmt.Errorf("no space available")
 	}
-	return rsp, nil
+
+	if ps == 1 {
+		return list[0], nil
+	}
+
+	//if maxCap == 0 {
+	//	return "", fmt.Errorf("no space available")
+	//}
+	return list[grand.N(0, ps-1)], nil
 }
