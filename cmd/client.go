@@ -57,18 +57,15 @@ var clientCmd = &cli.Command{
 		ch := make(chan struct{}, parallel)
 
 		for {
-			fmt.Println("=============1")
 			ch <- struct{}{}
-			list, err := gfile.ScanDirFile(path, suffix, false)
+			list, err := gfile.ScanDirFile(path, suffix, true)
 			if err != nil {
 				fmt.Printf("error (%s) in obtaining file list", err.Error())
 				continue
 			}
 
-			fmt.Println("=============")
-
 			if len(list) == 0 {
-				fmt.Println("------")
+				fmt.Println("not found file")
 				time.Sleep(5 * time.Second)
 				continue
 			}
