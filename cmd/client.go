@@ -75,7 +75,9 @@ var clientCmd = &cli.Command{
 			}
 			fileName = fmt.Sprintf("%s.%s", fileName, "fmv")
 
-			go func(file string) {
+			fmt.Println("send file : " + fileName)
+
+			go func(fileName string) {
 				se, err := consul.Discovery("fmv-server", consulAddr, tag)
 				if err != nil {
 					fmt.Printf("discovery error: %s", err.Error())
@@ -85,7 +87,7 @@ var clientCmd = &cli.Command{
 					fmt.Printf("discovery error: %s", err.Error())
 					return
 				}
-				fc := client.NewFileClient(file, se, chunk)
+				fc := client.NewFileClient(fileName, se, chunk)
 				fc.SendFile()
 				<-ch
 			}(fileName)
