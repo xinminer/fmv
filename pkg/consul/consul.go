@@ -62,7 +62,6 @@ func Discovery(serviceName string, address string, tag string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		ses := len(services)
 		ses = len(services)
 		if ses == 0 {
 			return "", errors.New("not found service")
